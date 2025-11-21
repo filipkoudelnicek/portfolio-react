@@ -74,4 +74,3 @@ npm start
 ## 📄 License
 
 Všechna práva vyhrazena © 2024 Filip Koudelníček
-
