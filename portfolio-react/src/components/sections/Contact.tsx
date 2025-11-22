@@ -44,9 +44,7 @@ export default function Contact() {
     setStatusMessage("");
 
     try {
-      // Note: In a React app, you'll need to set up a backend API endpoint
-      // For now, this will show an error - you'll need to configure your API endpoint
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/contact.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
