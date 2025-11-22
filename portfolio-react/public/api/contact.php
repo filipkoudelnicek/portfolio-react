@@ -42,6 +42,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 // Email configuration - ZMĚŇ TYTO HODNOTY!
 $to = 'info@filipkoudelnicek.cz'; // <-- Změň na svůj email
+$from_email = 'noreply@' . $_SERVER['HTTP_HOST']; // Email z tvé domény
 $subject = 'Nová zpráva z portfolia od ' . $name;
 
 // Email body
@@ -50,19 +51,30 @@ $email_body .= "Jméno: $name\n";
 $email_body .= "Email: $email\n";
 $email_body .= "Zpráva:\n$message\n";
 
-// Email headers
-$headers = "From: $email\r\n";
+// Email headers - From musí být z tvé domény!
+$headers = "From: Portfolio <$from_email>\r\n";
 $headers .= "Reply-To: $email\r\n";
 $headers .= "X-Mailer: PHP/" . phpversion();
+$headers .= "MIME-Version: 1.0\r\n";
+$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
 // Send email
-if (mail($to, $subject, $email_body, $headers)) {
+$mail_sent = @mail($to, $subject, $email_body, $headers);
+
+if ($mail_sent) {
+    // Log successful send (optional)
+    error_log("Email sent successfully from: $email");
+    
     http_response_code(200);
     echo json_encode([
         'success' => true,
         'message' => 'Zpráva byla úspěšně odeslána'
     ]);
 } else {
+    // Log error
+    $error = error_get_last();
+    error_log("Email failed to send. Error: " . print_r($error, true));
+    
     http_response_code(500);
     echo json_encode(['error' => 'Nepodařilo se odeslat email. Zkus to prosím později.']);
 }
